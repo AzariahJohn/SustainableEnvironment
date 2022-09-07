@@ -1,7 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const ftm = require('fast-two-sms')
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: "vithackathonsusenv@gmail.com",
+        pass: process.env.MAIL_PASSWORD,
+    },
+    port: 465,
+    host: 'smtp.gmail.com'
+})
+
 dotenv.config();
 
 const app = express();
@@ -22,9 +33,17 @@ mongoose.connect(process.env.MDB_CONNECT, (err) => {
     console.log("connected to DB")
 });
 
-app.post("/message", async(req, res) => {
-    await ftm.sendMessage({authorization: process.env.MESSAGE_API_KEY, message: "hello there", numbers: ['+91-9345987246']});
-    res.send("fine")
+const msgOpt = {
+    from: 'vithackathonsusenv@gmail.com',
+    to: 'azariah1200@gmail.com',
+    subject: 'Hey there',
+    text: "this is sample",
+}
+
+app.post("/msg", async(req, res) => {
+    transporter.sendMail(msgOpt)
 })
 
 app.use("/auth", require("./routers/userRouter"));
+
+// azmnwdopwuprtpfz
